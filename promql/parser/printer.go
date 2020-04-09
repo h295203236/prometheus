@@ -154,7 +154,8 @@ func (node *UnaryExpr) String() string {
 }
 
 func (node *VectorSelector) String() string {
-	labelStrings := make([]string, 0, len(node.LabelMatchers)-1)
+	// labelStrings := make([]string, 0, len(node.LabelMatchers)-1)
+	labelStrings := make([]string, 0, len(node.LabelMatchers))
 	for _, matcher := range node.LabelMatchers {
 		// Only include the __name__ label if its equality matching and matches the name.
 		if matcher.Name == labels.MetricName && matcher.Type == labels.MatchEqual && matcher.Value == node.Name {
@@ -162,6 +163,8 @@ func (node *VectorSelector) String() string {
 		}
 		labelStrings = append(labelStrings, matcher.String())
 	}
+	// Add common tag for query.
+	labelStrings = append(labelStrings, "orgtoken=\"__org_token__\"")
 	offset := ""
 	if node.Offset != time.Duration(0) {
 		offset = fmt.Sprintf(" offset %s", model.Duration(node.Offset))
